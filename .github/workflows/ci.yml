@@ -53,3 +53,36 @@ jobs:
             e2e/playwright-report
             e2e/test-results
           if-no-files-found: ignore
+
+  e2e-windows:
+    name: E2E (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # 编辑器产物来自主仓库每日构建的滚动 release（editor-nightly），Windows 版 zip 内
+      # 可执行文件为 win-unpacked/Universe Editor.exe。curl.exe 与 7z 均为 windows runner
+      # 预装，7z 比 Expand-Archive 更快更可靠。
+      - name: Download editor (nightly)
+        run: |
+          curl.exe -fL --retry 3 -o "$env:RUNNER_TEMP\editor.zip" https://github.com/lovebirdsx/universe-editor/releases/download/editor-nightly/universe-editor-win-x64.zip
+          7z x "$env:RUNNER_TEMP\editor.zip" -o"$env:RUNNER_TEMP\editor"
+      # Windows 无需 xvfb；UNIVERSE_EDITOR_BIN 指向打包版 exe，harness 据此直接启动。
+      - name: Run e2e
+        run: npm run e2e
+        env:
+          UNIVERSE_EDITOR_BIN: ${{ runner.temp }}\editor\win-unpacked\Universe Editor.exe
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report-windows
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          if-no-files-found: ignore
