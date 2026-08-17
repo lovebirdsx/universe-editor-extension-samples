@@ -1,0 +1,18 @@
+{
+  "name": "Sample Log",
+  "scopeName": "source.sample-log",
+  "patterns": [
+    {
+      "match": "^ERROR.*",
+      "name": "invalid.illegal.error.sample-log"
+    },
+    {
+      "match": "^WARN.*",
+      "name": "string.quoted.warning.sample-log"
+    },
+    {
+      "match": "^INFO.*",
+      "name": "comment.line.info.sample-log"
+    }
+  ]
+}

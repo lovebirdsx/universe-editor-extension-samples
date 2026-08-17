@@ -1,0 +1,59 @@
+{
+  "name": "declarative-features",
+  "displayName": "Declarative Features",
+  "description": "A pure-declarative Universe Editor extension sample: jsonValidation, grammars, iconThemes.",
+  "version": "0.0.1",
+  "publisher": "universe-samples",
+  "license": "Apache-2.0",
+  "type": "module",
+  "icon": "icon.png",
+  "categories": [
+    "Other"
+  ],
+  "engines": {
+    "universe": ">=0.12.0 <1.0.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": true
+  },
+  "files": [
+    "schemas",
+    "syntaxes",
+    "icons",
+    "icon.png"
+  ],
+  "contributes": {
+    "jsonValidation": [
+      {
+        "fileMatch": "*.sample-config.json",
+        "url": "./schemas/sample-config.schema.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "sample-log",
+        "scopeName": "source.sample-log",
+        "path": "./syntaxes/sample-log.tmLanguage.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "sample-log-icons",
+        "label": "Sample Log Icons",
+        "path": "./icons/sample-log-icon-theme.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "package": "uex package",
+    "universe:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@universe-editor/extension-api": "^0.12.0",
+    "@universe-editor/uex": "^0.1.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  }
+}

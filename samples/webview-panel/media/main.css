@@ -1,0 +1,10 @@
+body {
+  font-family: system-ui, sans-serif;
+  padding: 2rem;
+  color: var(--vscode-foreground, #cccccc);
+}
+
+button {
+  padding: 0.4em 1em;
+  cursor: pointer;
+}

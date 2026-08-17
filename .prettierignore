@@ -1,0 +1,7 @@
+node_modules
+dist
+*.vsix
+test-results
+playwright-report
+package-lock.json
+e2e/harness.local.mjs

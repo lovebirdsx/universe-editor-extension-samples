@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: Check & build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build:all
+
+  # 注：e2e 不在 CI 跑。e2e 需要一份已构建的主仓库 checkout（UNIVERSE_EDITOR_REPO，
+  # 复用其 @playwright/test / e2e-harness / 编辑器 out/ 产物），CI 里暂不可得。
+  # 本地跑法（见根 README「运行 e2e 的前置要求」）：
+  #
+  #   npm install
+  #   UNIVERSE_EDITOR_REPO=<path-to-universe-editor> npm run e2e -- samples/helloworld
+  #
+  # 首跑会触发主仓库 turbo build editor + extension-host；已构建过可用
+  # UNIVERSE_E2E_EDITOR_PREBUILT=1 跳过该步。位置参数过滤单个 sample。

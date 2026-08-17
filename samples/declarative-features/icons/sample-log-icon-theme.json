@@ -1,0 +1,10 @@
+{
+  "iconDefinitions": {
+    "_sample_log": {
+      "fontCharacter": "\uE900"
+    }
+  },
+  "fileExtensions": {
+    "slog": "_sample_log"
+  }
+}

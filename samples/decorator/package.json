@@ -1,0 +1,48 @@
+{
+  "name": "decorator",
+  "displayName": "Decorator",
+  "description": "A Universe Editor extension sample that decorates matching lines via TextEditorDecorationType.",
+  "version": "0.0.1",
+  "publisher": "universe-samples",
+  "license": "Apache-2.0",
+  "type": "module",
+  "icon": "icon.png",
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "engines": {
+    "universe": ">=0.12.0 <1.0.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": true
+  },
+  "files": [
+    "dist",
+    "icon.png"
+  ],
+  "activationEvents": [
+    "onCommand:decorator.toggleHighlight"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "decorator.toggleHighlight",
+        "title": "Decorator: Toggle Highlight"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "package": "uex package",
+    "universe:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@universe-editor/extension-api": "^0.12.0",
+    "@universe-editor/uex": "^0.1.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  }
+}

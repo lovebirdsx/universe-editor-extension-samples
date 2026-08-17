@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.vsix
+*.uex
+test-results/
+playwright-report/
+e2e/harness.local.mjs
+.DS_Store

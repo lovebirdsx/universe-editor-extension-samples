@@ -1,0 +1,19 @@
+{
+  "name": "universe-editor-extension-samples",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Universe Editor 扩展示例仓库：自包含、可抄写的第三方扩展示例，借主仓库已构建产物跑 e2e。",
+  "type": "module",
+  "workspaces": [
+    "samples/*"
+  ],
+  "scripts": {
+    "build:all": "npm run build --workspaces --if-present",
+    "package:all": "npm run package --workspaces --if-present",
+    "e2e": "node scripts/e2e/run.mjs",
+    "check": "node scripts/check-sdk-drift.mjs && prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.0.0"
+  }
+}
