@@ -24,8 +24,8 @@ npm run package             # → universe-samples.helloworld-0.0.1.vsix（会�
 ## e2e
 
 ```bash
-# 仓库根，UNIVERSE_EDITOR_REPO 指向本地 universe-editor checkout
-UNIVERSE_EDITOR_REPO=<path> npm run e2e -- samples/helloworld
+# 仓库根；编辑器定位见根 README「运行 e2e 的前置要求」（Windows 安装版零配置，否则设 UNIVERSE_EDITOR_BIN）
+npm run e2e -- samples/helloworld
 ```
 
 spec 经 `makeSampleTest('helloworld')` 冷启动编辑器并只装载本 sample，断言命令已注册、执行后 OutputChannel 里出现 `Hello from Hello World!`。

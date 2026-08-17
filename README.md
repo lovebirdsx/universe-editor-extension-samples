@@ -1,20 +1,26 @@
 # universe-editor-extension-samples
 
-Universe Editor 扩展示例仓库 —— 与主仓库 `universe-editor` 分离的独立仓库，汇集可直接抄写的第三方扩展示例。每个 sample（`samples/<name>/`）是一个自包含的扩展工程：带 `package.json` / `tsconfig` / `esbuild.config.mjs` / `src/extension.ts` / `README.md` / `icon.png`，并带 e2e 冒烟 spec，借主仓库已构建的编辑器产物 + e2e-harness 跑端到端验证。
+Universe Editor 扩展示例仓库 —— 与主仓库 `universe-editor` 分离的独立仓库，汇集可直接抄写的第三方扩展示例。每个 sample（`samples/<name>/`）是一个自包含的扩展工程：带 `package.json` / `tsconfig` / `esbuild.config.mjs` / `src/extension.ts` / `README.md` / `icon.png`，并带 e2e 冒烟 spec，借本机可运行的 Universe Editor + `@universe-editor/e2e-harness` 跑端到端验证。
 
-> 本仓库不是 pnpm workspace：sample 依赖经 npm workspaces 由各自 `package.json` 声明并 hoist 到根 `node_modules`；e2e 通过 `UNIVERSE_EDITOR_REPO` 复用主仓库的 `@playwright/test` / e2e-harness / 编辑器 `out/` 产物（**绝不出现第二份 playwright**，见 `scripts/e2e/run.mjs`）。
+> 本仓库不是 pnpm workspace：sample 依赖经 npm workspaces 由各自 `package.json` 声明并 hoist 到根 `node_modules`；e2e 依赖 `@universe-editor/e2e-harness`（devDep）+ 根 devDep `@playwright/test`（harness 的 peerDep，整棵树必须唯一一份，**绝不出现第二份 playwright**，见 `scripts/e2e/run.mjs`）。
 
 ## 运行 e2e 的前置要求
 
-1. 本地有一份已 `pnpm install` + 构建过的 `universe-editor` checkout（含 `packages/e2e-harness/dist`、`apps/editor/out`、`node_modules/turbo`）。
-2. 设 `UNIVERSE_EDITOR_REPO` 指向它（默认 `../universe-editor`）。
+1. `npm install`（装齐 `@universe-editor/e2e-harness` / `@universe-editor/e2e-contract` 与根 devDep `@playwright/test`）。
+2. 一个可运行的 Universe Editor：Windows 装了安装版即可零配置（自动探测 `%LOCALAPPDATA%\Programs\Universe Editor\Universe Editor.exe`）；否则设 `UNIVERSE_EDITOR_BIN`（由 harness 的 `resolveEditorLaunchTarget` 读取）指向以下三形态之一：
+
+| 形态                                                            | `UNIVERSE_EDITOR_BIN` | 备注                                                  |
+| --------------------------------------------------------------- | --------------------- | ----------------------------------------------------- |
+| 打包版可执行文件（NSIS 安装版 / win-unpacked / linux-unpacked） | 可执行文件路径        | 无额外要求                                            |
+| dev 产物                                                        | `out/main/index.js`   | 该仓库 node_modules 需有 electron                     |
+| dev-bundle                                                      | electron 二进制       | 同时设 `UNIVERSE_EDITOR_MAIN_ENTRY=out/main/index.js` |
 
 ```bash
-npm install
-UNIVERSE_EDITOR_REPO=<path-to-universe-editor> npm run e2e -- samples/helloworld
+npm run e2e -- samples/helloworld   # 单个 sample（samples/<name>、<name> 均可）
+npm run e2e                         # 全量
 ```
 
-首跑会触发主仓库 `turbo build editor + extension-host`（耗时正常）；已经构建过可用 `UNIVERSE_E2E_EDITOR_PREBUILT=1` 跳过该步。位置参数过滤单个 sample（`samples/<name>`、`<name>` 均可）。
+e2e-harness 版本约定：minor 跟随编辑器 minor；升级编辑器时同步升级 harness（探针 API 随编辑器演进）。
 
 ## 样本索引
 

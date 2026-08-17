@@ -18,12 +18,38 @@ jobs:
       - run: npm run check
       - run: npm run build:all
 
-  # 注：e2e 不在 CI 跑。e2e 需要一份已构建的主仓库 checkout（UNIVERSE_EDITOR_REPO，
-  # 复用其 @playwright/test / e2e-harness / 编辑器 out/ 产物），CI 里暂不可得。
-  # 本地跑法（见根 README「运行 e2e 的前置要求」）：
-  #
-  #   npm install
-  #   UNIVERSE_EDITOR_REPO=<path-to-universe-editor> npm run e2e -- samples/helloworld
-  #
-  # 首跑会触发主仓库 turbo build editor + extension-host；已构建过可用
-  # UNIVERSE_E2E_EDITOR_PREBUILT=1 跳过该步。位置参数过滤单个 sample。
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # 编辑器产物来自主仓库每日构建的滚动 release（editor-nightly），zip 内
+      # 可执行文件为 linux-unpacked/universe-editor。UNIVERSE_EDITOR_BIN 指向该
+      # 打包版可执行文件，harness 的 resolveEditorLaunchTarget 据此直接启动。
+      - name: Download editor (nightly)
+        run: |
+          curl -fL -o /tmp/editor.zip https://github.com/lovebirdsx/universe-editor/releases/download/editor-nightly/universe-editor-linux-x64.zip
+          unzip -q /tmp/editor.zip -d /tmp/editor
+      # 保险步骤：ubuntu-latest 一般预装 xvfb 与 electron 所需系统库，但缺库时
+      # electron 启动报 "error while loading shared libraries"，此处显式补齐。
+      - name: Install xvfb + Electron system libs (insurance)
+        run: sudo apt-get update && sudo apt-get install -y xvfb libnss3 libgtk-3-0 libasound2t64
+      - name: Run e2e
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1280x1024x24" npm run e2e
+        env:
+          UNIVERSE_EDITOR_BIN: /tmp/editor/linux-unpacked/universe-editor
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            e2e/playwright-report
+            e2e/test-results
+          if-no-files-found: ignore

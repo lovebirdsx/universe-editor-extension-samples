@@ -2,7 +2,7 @@
   "name": "universe-editor-extension-samples",
   "version": "0.0.0",
   "private": true,
-  "description": "Universe Editor 扩展示例仓库：自包含、可抄写的第三方扩展示例，借主仓库已构建产物跑 e2e。",
+  "description": "Universe Editor 扩展示例仓库：自包含、可抄写的第三方扩展示例，借本机可运行的 Universe Editor 跑 e2e。",
   "type": "module",
   "workspaces": [
     "samples/*"
@@ -14,6 +14,9 @@
     "check": "node scripts/check-sdk-drift.mjs && prettier --check ."
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
+    "@universe-editor/e2e-contract": "^0.1.0",
+    "@universe-editor/e2e-harness": "^0.1.0",
     "prettier": "^3.0.0"
   }
 }

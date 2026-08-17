@@ -1,4 +1,4 @@
-import { defineE2EConfig } from './harness.mjs'
+import { defineE2EConfig } from '@universe-editor/e2e-harness'
 
 // Shared knobs (timeout / retries / workers / reporter / trace-on-failure) +
 // tag filtering come from the harness factory, so behaviour matches the core +
