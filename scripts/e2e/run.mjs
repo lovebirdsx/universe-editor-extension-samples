@@ -23,7 +23,7 @@
 
 import { createRequire } from 'node:module'
 import { spawnSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -58,8 +58,14 @@ function run(command, args, opts = {}) {
   return res.status ?? 1
 }
 
-// Build each tested sample so the suite loads a fresh dist/.
-for (const name of sampleNames) {
+// Build each tested sample so the suite loads a fresh dist/. A full run (no
+// positional args) builds every sample — a clean checkout has no dist/ at all.
+const toBuild = sampleNames.length
+  ? sampleNames
+  : readdirSync(resolve(samplesRoot, 'samples')).filter((name) =>
+      existsSync(resolve(samplesRoot, 'samples', name, 'esbuild.config.mjs')),
+    )
+for (const name of toBuild) {
   const sampleDir = resolve(samplesRoot, 'samples', name)
   const config = resolve(sampleDir, 'esbuild.config.mjs')
   if (!existsSync(config)) {
