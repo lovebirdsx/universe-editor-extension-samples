@@ -13,7 +13,7 @@ npx uex dev       # 起 Extension Development Host 并装载本目录
 ## 运行步骤
 
 1. 命令面板运行 `Webview Panel: Show Panel`（命令 id `webview-panel.show`），扩展经 `onCommand` 激活并在当前活动编辑器组打开一个 `Webview Panel` tab。
-2. tab 里渲染出的页面：标题 + 一个计数 `<span>` + `Notify Extension` 按钮，样式与脚本分别经 `asWebviewUri` 从 `media/main.css` / `media/main.js` 加载。
+2. tab 里渲染出的页面：标题 + 一行 codicon 图标（`codicon-search` / `codicon-source-control` / `codicon-check`）+ 一个计数 `<span>` + `Notify Extension` 按钮，样式与脚本分别经 `asWebviewUri` 从 `media/main.css` / `media/codicon.css` / `media/main.js` 加载。
 3. 点击 `Notify Extension`：页面经 `acquireVsCodeApi().postMessage` 回发消息，扩展 `webview.onDidReceiveMessage` 收到后往 Output 面板的 `Webview Panel` 通道打印 `Received notify from webview`。
 4. 命令面板运行 `Webview Panel: Send Message`（命令 id `webview-panel.sendMessage`）：扩展 `postMessage({ type: 'update', count })` 推数据，页面 `window.addEventListener('message', ...)` 收到后更新计数。
 
@@ -26,6 +26,14 @@ npx uex dev       # 起 Extension Development Host 并装载本目录
 - **无 `WebviewPanelSerializer`**：窗口 reload / 重启后 tab 不恢复，扩展重新激活后自行重建即可。
 - `webview` 表面（`html` / `options` / `cspSource` / `asWebviewUri` / 双向消息）与自定义编辑器拿到的是同一类型；`title` 可写、`reveal()` / `dispose()` / `onDidDispose` 对齐。
 - 消息桥：页面侧用 `acquireVsCodeApi()`（宿主同时注入别名 `acquireUniverseApi()`）；桥上的 `getState` / `setState` 是占位实现（`getState` 恒返回 `undefined`），webview 状态持久化未落地。
+
+## Codicon 图标字体
+
+本示例把官方 `webview-codicons-sample` 的能力并入：在 webview 里加载 VSCode codicons 图标字体并渲染图标。
+
+- **资产**：`media/codicon.ttf`（字体）+ `media/codicon.css`（精简版样式，只保留 `@font-face`、`.codicon` 基类与本示例用到的 `codicon-search` / `codicon-source-control` / `codicon-check` 三个字形）。来源 [@vscode/codicons 0.0.45](https://github.com/microsoft/vscode-codicons)，license **CC BY 4.0**。
+- **加载路径**：`codicon.css` 经 `asWebviewUri` 加载；`@font-face` 里的 `src: url('./codicon.ttf')` 相对 css 文件解析，同目录的 ttf 走同一 `universe-app://root/_resource_/...` 协议（扩展自身目录恒在资源 allow-list，无需额外 `localResourceRoots`）。
+- **CSP 要点**：`<meta>` CSP 必须把 `font-src`（以及样式的 `style-src`）包含 `webview.cspSource`（=`universe-app://root`），否则字体被 CSP 拦截；`default-src 'none'` 下漏写 `font-src` 会让 `@font-face` 静默失败。
 
 ## 相关
 

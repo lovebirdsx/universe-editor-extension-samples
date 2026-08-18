@@ -1,0 +1,45 @@
+/*---------------------------------------------------------------------------------------------
+ *  codicon.css — trimmed from @vscode/codicons 0.0.45 (dist/codicon.css).
+ *
+ *  Icon font: Microsoft Visual Studio Code codicons
+ *  (https://github.com/microsoft/vscode-codicons)
+ *  License: Creative Commons Attribution 4.0 International (CC BY 4.0) — the
+ *  upstream package ships its LICENSE in the @vscode/codicons root. Only the
+ *  @font-face, the .codicon base class and the glyphs this sample renders are
+ *  kept here; the upstream stylesheet is much larger.
+ *
+ *  The @font-face url is relative to this file, so `codicon.ttf` in the same
+ *  directory resolves to the same `universe-app://root/_resource_/...` origin
+ *  the host rewrote `codicon.css` to via asWebviewUri.
+ *--------------------------------------------------------------------------------------------*/
+
+@font-face {
+  font-family: 'codicon';
+  font-display: block;
+  src: url('./codicon.ttf') format('truetype');
+}
+
+.codicon[class*='codicon-'] {
+  font: normal normal normal 16px/1 codicon;
+  display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.codicon-search:before {
+  content: '\ea6d';
+}
+
+.codicon-source-control:before {
+  content: '\ea68';
+}
+
+.codicon-check:before {
+  content: '\eab2';
+}

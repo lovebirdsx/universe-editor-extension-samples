@@ -1,0 +1,80 @@
+{
+  "name": "source-control",
+  "displayName": "Source Control",
+  "description": "A Universe Editor extension sample that registers a source control provider.",
+  "version": "0.0.1",
+  "publisher": "universe-samples",
+  "license": "Apache-2.0",
+  "type": "module",
+  "icon": "icon.png",
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "engines": {
+    "universe": ">=0.12.0 <1.0.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": true
+  },
+  "files": [
+    "dist",
+    "icon.png"
+  ],
+  "activationEvents": [
+    "onCommand:sourceControl.activate"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "sourceControl.activate",
+        "title": "Source Control: Activate"
+      },
+      {
+        "command": "sourceControl.refresh",
+        "title": "Source Control: Refresh"
+      },
+      {
+        "command": "sourceControl.commit",
+        "title": "Source Control: Commit"
+      },
+      {
+        "command": "sourceControl.setInputBox",
+        "title": "Source Control: Set Commit Message"
+      },
+      {
+        "command": "sourceControl.openResource",
+        "title": "Source Control: Open Resource"
+      }
+    ],
+    "menus": {
+      "scm/title": [
+        {
+          "command": "sourceControl.refresh",
+          "when": "scmProvider == sample",
+          "group": "navigation"
+        }
+      ],
+      "scm/resourceState/context": [
+        {
+          "command": "sourceControl.openResource",
+          "when": "scmProvider == sample",
+          "group": "inline"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "package": "uex package",
+    "universe:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@universe-editor/extension-api": "^0.12.0",
+    "@universe-editor/uex": "^0.2.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "fonts": [
+    {
+      "id": "sample-product-icons",
+      "src": [
+        {
+          "path": "./codicon.ttf",
+          "format": "truetype"
+        }
+      ]
+    }
+  ],
+  "iconDefinitions": {
+    "search": {
+      "fontCharacter": "\uEA84"
+    },
+    "settings-gear": {
+      "fontCharacter": "\uEA68"
+    },
+    "source-control": {
+      "fontCharacter": "\uEA6D"
+    }
+  }
+}

@@ -20,17 +20,24 @@ function fileUri(fsPath: string): UriComponents {
 function getWebviewContent(webview: Webview, extensionRoot: string): string {
   const scriptUri = webview.asWebviewUri(fileUri(`${extensionRoot}/media/main.js`))
   const styleUri = webview.asWebviewUri(fileUri(`${extensionRoot}/media/main.css`))
-  const csp = `default-src 'none'; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'unsafe-inline' ${webview.cspSource};`
+  const codiconUri = webview.asWebviewUri(fileUri(`${extensionRoot}/media/codicon.css`))
+  const csp = `default-src 'none'; style-src 'unsafe-inline' ${webview.cspSource}; font-src ${webview.cspSource}; script-src 'unsafe-inline' ${webview.cspSource};`
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="${csp}">
 <link rel="stylesheet" href="${styleUri}">
+<link rel="stylesheet" href="${codiconUri}">
 <title>Webview Panel</title>
 </head>
 <body>
 <h1>Webview Panel</h1>
+<p class="codicon-row">
+  <span class="codicon codicon-search" aria-hidden="true"></span>
+  <span class="codicon codicon-source-control" aria-hidden="true"></span>
+  <span class="codicon codicon-check" aria-hidden="true"></span>
+</p>
 <p>Extension-pushed count: <span id="counter">0</span></p>
 <button id="notify" type="button">Notify Extension</button>
 <script src="${scriptUri}"></script>

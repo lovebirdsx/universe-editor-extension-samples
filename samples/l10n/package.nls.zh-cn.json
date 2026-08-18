@@ -1,0 +1,5 @@
+{
+  "displayName": "本地化示例",
+  "description": "演示通过 package.nls.json 实现清单本地化。",
+  "command.showLocalizedManifest.title": "本地化：显示已本地化的清单"
+}

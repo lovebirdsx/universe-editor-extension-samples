@@ -1,0 +1,5 @@
+{
+  "displayName": "Localization Sample",
+  "description": "Demonstrates manifest localization through package.nls.json.",
+  "command.showLocalizedManifest.title": "L10n: Show Localized Manifest"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "color-theme",
+  "displayName": "Color Theme",
+  "description": "A pure-declarative Universe Editor extension sample: contributes.themes.",
+  "version": "0.0.1",
+  "publisher": "universe-samples",
+  "license": "Apache-2.0",
+  "type": "module",
+  "icon": "icon.png",
+  "categories": [
+    "Other"
+  ],
+  "engines": {
+    "universe": ">=0.12.0 <1.0.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": true
+  },
+  "files": [
+    "themes",
+    "icon.png"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "id": "color-theme-sample-dark",
+        "label": "Color Theme Sample Dark",
+        "description": "A distinctive dark color theme contributed by the color-theme sample.",
+        "uiTheme": "vs-dark",
+        "path": "./themes/color-theme-sample-dark.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "package": "uex package",
+    "universe:prepublish": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@universe-editor/extension-api": "^0.12.0",
+    "@universe-editor/uex": "^0.2.0",
+    "esbuild": "^0.25.0",
+    "typescript": "^5.8.0"
+  }
+}
