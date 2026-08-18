@@ -134,6 +134,10 @@ const { test, expect } = makeSampleTest('helloworld')
 
 断言走 `window.__E2E__` 探针（`hasCommand` / `runCommand` / `getOutputChannelContent` / `getActiveEditorTypeId` / `openFileUri` / `getContextKey` …），类型声明见 `e2e/sampleApp.d.mts`。`page.evaluate` 里用 `window.__E2E__!`（非空断言）。
 
+## CI
+
+`.github/workflows/ci.yml` 的 e2e job 使用主仓库正式发布版本的编辑器产物：主仓库推送 `vX.Y.Z` tag 并发布同名 Release 后，会向本仓库发送 `repository_dispatch`（`event_type: editor-release`，`client_payload.tag = "vX.Y.Z"`）自动触发本仓库 CI，此时 e2e 下载该 tag 对应的产物；平时 push / PR 及手动触发（`workflow_dispatch`）则回退到 `releases/latest` 的最新正式版本。
+
 ## 校验
 
 ```bash

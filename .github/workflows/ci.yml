@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  repository_dispatch:
+    types: [editor-release]
+  workflow_dispatch:
 
 jobs:
   check:
@@ -29,12 +32,22 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # 编辑器产物来自主仓库每日构建的滚动 release（editor-nightly），zip 内
-      # 可执行文件为 linux-unpacked/universe-editor。UNIVERSE_EDITOR_BIN 指向该
+      # 编辑器产物来自主仓库正式发布 Release（tag 形如 vX.Y.Z）。repository_dispatch
+      # 由主仓库发布流程触发，client_payload.tag 携带具体 tag；push / PR / 手动触发时
+      # tag 为空，回退到 releases/latest 的最新正式版本。
+      # zip 内可执行文件为 linux-unpacked/universe-editor，UNIVERSE_EDITOR_BIN 指向该
       # 打包版可执行文件，harness 的 resolveEditorLaunchTarget 据此直接启动。
-      - name: Download editor (nightly)
+      - name: Download editor (release)
+        env:
+          EDITOR_TAG: ${{ github.event.client_payload.tag }}
         run: |
-          curl -fL -o /tmp/editor.zip https://github.com/lovebirdsx/universe-editor/releases/download/editor-nightly/universe-editor-linux-x64.zip
+          tag="$EDITOR_TAG"
+          if [ -n "$tag" ]; then
+            url="https://github.com/lovebirdsx/universe-editor/releases/download/${tag}/universe-editor-linux-x64.zip"
+          else
+            url="https://github.com/lovebirdsx/universe-editor/releases/latest/download/universe-editor-linux-x64.zip"
+          fi
+          curl -fL --retry 3 -o /tmp/editor.zip "$url"
           unzip -q /tmp/editor.zip -d /tmp/editor
       # 保险步骤：ubuntu-latest 一般预装 xvfb 与 electron 所需系统库，但缺库时
       # electron 启动报 "error while loading shared libraries"，此处显式补齐。
@@ -65,12 +78,22 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # 编辑器产物来自主仓库每日构建的滚动 release（editor-nightly），Windows 版 zip 内
-      # 可执行文件为 win-unpacked/Universe Editor.exe。curl.exe 与 7z 均为 windows runner
-      # 预装，7z 比 Expand-Archive 更快更可靠。
-      - name: Download editor (nightly)
+      # 编辑器产物来自主仓库正式发布 Release（tag 形如 vX.Y.Z）。repository_dispatch
+      # 由主仓库发布流程触发，client_payload.tag 携带具体 tag；push / PR / 手动触发时
+      # tag 为空，回退到 releases/latest 的最新正式版本。
+      # Windows 版 zip 内可执行文件为 win-unpacked/Universe Editor.exe。curl.exe 与 7z 均
+      # 为 windows runner 预装，7z 比 Expand-Archive 更快更可靠。
+      - name: Download editor (release)
+        env:
+          EDITOR_TAG: ${{ github.event.client_payload.tag }}
         run: |
-          curl.exe -fL --retry 3 -o "$env:RUNNER_TEMP\editor.zip" https://github.com/lovebirdsx/universe-editor/releases/download/editor-nightly/universe-editor-win-x64.zip
+          $tag = "$env:EDITOR_TAG"
+          if ($tag) {
+            $url = "https://github.com/lovebirdsx/universe-editor/releases/download/$tag/universe-editor-win-x64.zip"
+          } else {
+            $url = "https://github.com/lovebirdsx/universe-editor/releases/latest/download/universe-editor-win-x64.zip"
+          }
+          curl.exe -fL --retry 3 -o "$env:RUNNER_TEMP\editor.zip" $url
           7z x "$env:RUNNER_TEMP\editor.zip" -o"$env:RUNNER_TEMP\editor"
       # Windows 无需 xvfb；UNIVERSE_EDITOR_BIN 指向打包版 exe，harness 据此直接启动。
       - name: Run e2e
