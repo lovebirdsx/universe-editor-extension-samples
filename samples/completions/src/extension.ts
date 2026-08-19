@@ -2,6 +2,8 @@ import {
   languages,
   type CompletionItem,
   type ExtensionContext,
+  type Position,
+  type TextDocument,
 } from '@universe-editor/extension-api'
 
 // LSP CompletionItemKind is a numeric enum re-exported as a type only, so the
@@ -37,15 +39,19 @@ const TRIGGER_ITEMS: CompletionItem[] = [
   { label: '@universe-editor/workbench-ui', kind: KIND.module, detail: 'module' },
 ]
 
+export function getCompletionItems(document: TextDocument, position: Position): CompletionItem[] {
+  const line = document.getText().split('\n')[position.line] ?? ''
+  const prefix = line.slice(0, position.character)
+  return prefix.endsWith(TRIGGER_CHARACTER) ? TRIGGER_ITEMS : NORMAL_ITEMS
+}
+
 export function activate(context: ExtensionContext): void {
   context.subscriptions.push(
     languages.registerCompletionItemProvider(
       'plaintext',
       {
         provideCompletionItems(document, position) {
-          const line = document.getText().split('\n')[position.line] ?? ''
-          const prefix = line.slice(0, position.character)
-          return prefix.endsWith(TRIGGER_CHARACTER) ? TRIGGER_ITEMS : NORMAL_ITEMS
+          return getCompletionItems(document, position)
         },
       },
       TRIGGER_CHARACTER,

@@ -42,6 +42,8 @@
     "build": "node esbuild.config.mjs",
     "watch": "node esbuild.config.mjs --watch",
     "package": "uex package",
+    "e2e": "node ../../scripts/e2e/run.mjs custom-editor",
+    "test": "vitest run",
     "universe:prepublish": "npm run build"
   },
   "devDependencies": {

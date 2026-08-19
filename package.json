@@ -11,12 +11,15 @@
     "build:all": "npm run build --workspaces --if-present",
     "package:all": "npm run package --workspaces --if-present",
     "e2e": "node scripts/e2e/run.mjs",
+    "test": "vitest run",
+    "test:e2e": "npm run e2e",
     "check": "node scripts/check-sdk-drift.mjs && prettier --check ."
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",
     "@universe-editor/e2e-contract": "^0.1.0",
     "@universe-editor/e2e-harness": "^0.1.0",
-    "prettier": "^3.0.0"
+    "prettier": "^3.0.0",
+    "vitest": "^4.1.0"
   }
 }

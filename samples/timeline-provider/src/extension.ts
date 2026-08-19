@@ -17,7 +17,7 @@ import { fileURLToPath } from 'node:url'
 
 const CONTEXT_VALUE = 'sample-timeline:event'
 
-class SampleTimelineProvider implements TimelineProvider {
+export class SampleTimelineProvider implements TimelineProvider {
   readonly id = 'sample-timeline'
   readonly label = 'Sample Timeline'
 

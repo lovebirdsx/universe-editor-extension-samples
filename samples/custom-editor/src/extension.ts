@@ -15,11 +15,11 @@ class HexDocument implements CustomDocument {
   dispose(): void {}
 }
 
-function escapeHtml(value: string): string {
+export function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-function hexDump(bytes: Uint8Array): string {
+export function hexDump(bytes: Uint8Array): string {
   const lines: string[] = []
   for (let offset = 0; offset < bytes.length; offset += 16) {
     const chunk = bytes.subarray(offset, offset + 16)

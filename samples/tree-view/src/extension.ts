@@ -35,7 +35,7 @@ const tree: readonly Dependency[] = [
   },
 ]
 
-class DependencyProvider implements TreeDataProvider<Dependency> {
+export class DependencyProvider implements TreeDataProvider<Dependency> {
   private readonly _onDidChangeTreeData = new EventEmitter<Dependency | undefined | void>()
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event
 
@@ -77,8 +77,8 @@ export function activate(context: ExtensionContext): void {
     output,
     window.registerTreeDataProvider(VIEW_ID, provider),
     commands.registerCommand('tree-view.refreshEntry', () => provider.refresh()),
-    commands.registerCommand('tree-view.openDependency', (name: string) => {
-      output.appendLine(`Opening dependency ${name}`)
+    commands.registerCommand('tree-view.openDependency', (name: unknown) => {
+      output.appendLine(`Opening dependency ${String(name)}`)
     }),
   )
 }

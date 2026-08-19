@@ -15,7 +15,7 @@ const BAD_WORD = 'foo_bad'
 const GOOD_WORD = 'foo_good'
 const OWNER = 'code-actions-sample'
 
-function offsetToPosition(text: string, offset: number): Position {
+export function offsetToPosition(text: string, offset: number): Position {
   const before = text.slice(0, offset)
   return {
     line: before.split('\n').length - 1,
@@ -23,7 +23,7 @@ function offsetToPosition(text: string, offset: number): Position {
   }
 }
 
-function findBadWordRanges(text: string): Range[] {
+export function findBadWordRanges(text: string): Range[] {
   const ranges: Range[] = []
   let from = 0
   for (;;) {
@@ -38,7 +38,7 @@ function findBadWordRanges(text: string): Range[] {
   return ranges
 }
 
-function overlaps(a: Range, b: Range): boolean {
+export function overlaps(a: Range, b: Range): boolean {
   const aBeforeB =
     a.end.line < b.start.line ||
     (a.end.line === b.start.line && a.end.character <= b.start.character)

@@ -22,6 +22,23 @@ npm run e2e                         # 全量
 
 e2e-harness 版本约定：minor 跟随编辑器 minor；升级编辑器时同步升级 harness（探针 API 随编辑器演进）。
 
+```bash
+cd samples/helloworld && npm run e2e   # 每个 sample 的 package.json 自带 e2e 入口，等价于上一节的单 sample 形式
+```
+
+## 单元测试
+
+单测框架为根 devDep `vitest`（根 `npm run test` 经 `vitest.config.ts` 的 `test.projects` 聚合各 sample 的 project）。文件约定：`src/**/*.test.ts` 是单元测试、`e2e/*.spec.ts` 是 Playwright e2e，两者由各自的 `vitest.config.ts` include 区分，互不干扰。
+
+只有含纯逻辑的 sample 带 `test` script（`vitest run`）+ 同级 `vitest.config.ts` + `src/extension.test.ts`（如 semantic-tokens 的 tokenizer、code-actions 的 range 计算、mcp-server 的黑盒 stdio 协议测试）；仅注册命令的薄封装 sample 不写低价值单测，行为由 e2e 覆盖。
+
+`@universe-editor/extension-api` 的 `EventEmitter` / `TreeItem` / `Uri` 是纯自包含实现（无 host bridge），测试可直接 import 使用；`window` / `workspace` / `languages` 等 host 句柄只在调用方法时触碰 bridge，因此**测试只 import 不调用 `activate()` 即安全**，无需 mock。
+
+```bash
+npm run test            # 全量单测
+cd samples/tree-view && npm test   # 单个 sample 单测
+```
+
 ## 样本索引
 
 24 个 sample，按「入门 UI / 语言特性 / 视图 / 平台特色」四批组织。
@@ -122,7 +139,7 @@ e2e-harness 版本约定：minor 跟随编辑器 minor；升级编辑器时同�
 
 **目录**：`samples/<小写目录名>/`，`package.json` 的 `name` 用同名小写目录名、`publisher: "universe-samples"`。
 
-**package.json 要点**：`"type": "module"`、`main: "./dist/extension.js"`、`engines.universe: ">=0.12.0 <1.0.0"`（勿 `^0.x`，host 的 semver 谈判不认）、`files` 白名单（`dist`、`icon.png`、被 contributes 引用的资源）、显式 `activationEvents`、`capabilities.untrustedWorkspaces: true`、scripts `build`/`watch`/`package`，devDeps 与根 `sdk-versions.json` 一致（跑 `npm run check` 校验）。`tsconfig.json` / `esbuild.config.mjs` 自包含（不 extends 根，保单目录可拎出）。代码风格：无分号、单引号、尾逗号、宽 100，默认不写注释。
+**package.json 要点**：`"type": "module"`、`main: "./dist/extension.js"`、`engines.universe: ">=0.12.0 <1.0.0"`（勿 `^0.x`，host 的 semver 谈判不认）、`files` 白名单（`dist`、`icon.png`、被 contributes 引用的资源）、显式 `activationEvents`、`capabilities.untrustedWorkspaces: true`、scripts `build`/`watch`/`package`/`e2e`（`node ../../scripts/e2e/run.mjs <name>`），devDeps 与根 `sdk-versions.json` 一致（跑 `npm run check` 校验）。`tsconfig.json` / `esbuild.config.mjs` 自包含（不 extends 根，保单目录可拎出）。代码风格：无分号、单引号、尾逗号、宽 100，默认不写注释。含纯逻辑的 sample 还需附 `test` script（`vitest run`）+ 同级 `vitest.config.ts` + `src/*.test.ts`（约定见「单元测试」小节）。
 
 **spec 契约**：`samples/<name>/e2e/<name>.spec.ts` 从固定相对路径 import：
 
@@ -136,13 +153,14 @@ const { test, expect } = makeSampleTest('helloworld')
 
 ## CI
 
-`.github/workflows/ci.yml` 的 e2e job 使用主仓库正式发布版本的编辑器产物：主仓库推送 `vX.Y.Z` tag 并发布同名 Release 后，会向本仓库发送 `repository_dispatch`（`event_type: editor-release`，`client_payload.tag = "vX.Y.Z"`）自动触发本仓库 CI，此时 e2e 下载该 tag 对应的产物；平时 push / PR 及手动触发（`workflow_dispatch`）则回退到 `releases/latest` 的最新正式版本。
+`.github/workflows/ci.yml` 的 e2e job 使用主仓库正式发布版本的编辑器产物：主仓库推送 `vX.Y.Z` tag 并发布同名 Release 后，会向本仓库发送 `repository_dispatch`（`event_type: editor-release`，`client_payload.tag = "vX.Y.Z"`）自动触发本仓库 CI，此时 e2e 下载该 tag 对应的产物；平时 push / PR 及手动触发（`workflow_dispatch`）则回退到 `releases/latest` 的最新正式版本。check job 除 sdk drift + prettier + 构建外还跑 `npm run test` 单元测试；e2e 在 ubuntu 与 windows 两个 job 上运行。
 
 ## 校验
 
 ```bash
 npm run check          # sdk drift + prettier
+npm run test           # 全部 sample 的 vitest 单元测试（projects 聚合）
 npm run build:all      # 构建所有 sample 的 dist/
 npm run package:all    # 打包所有 sample 的 .vsix
-npm run e2e -- samples/<name>   # 跑单个 sample 的 e2e
+npm run e2e -- samples/<name>   # 跑单个 sample 的 e2e（同 npm run test:e2e -- samples/<name>）
 ```

@@ -13,7 +13,7 @@ const KEYWORD = 0
 const FUNCTION = 1
 const DECLARATION = 1 << 0
 
-interface ParsedToken {
+export interface ParsedToken {
   line: number
   startCharacter: number
   length: number
@@ -21,7 +21,7 @@ interface ParsedToken {
   tokenModifiers: number
 }
 
-function parseText(text: string): ParsedToken[] {
+export function parseText(text: string): ParsedToken[] {
   const tokens: ParsedToken[] = []
   const lines = text.split(/\r\n|\r|\n/)
   for (let i = 0; i < lines.length; i++) {
@@ -49,7 +49,7 @@ function parseText(text: string): ParsedToken[] {
   return tokens.sort((a, b) => a.line - b.line || a.startCharacter - b.startCharacter)
 }
 
-function encode(tokens: readonly ParsedToken[]): number[] {
+export function encode(tokens: readonly ParsedToken[]): number[] {
   const data: number[] = []
   let prevLine = 0
   let prevStart = 0

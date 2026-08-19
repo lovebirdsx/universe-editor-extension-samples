@@ -3,6 +3,7 @@ import {
   window,
   type ExtensionContext,
   type Range,
+  type TextDocument,
   type TextEditor,
   type TextEditorDecorationType,
 } from '@universe-editor/extension-api'
@@ -12,7 +13,7 @@ const MATCH = 'HIGHLIGHT'
 let decorationType: TextEditorDecorationType | undefined
 let decorated = false
 
-function highlightRanges(editor: TextEditor): Range[] {
+export function highlightRanges(editor: { document: Pick<TextDocument, 'getText'> }): Range[] {
   const ranges: Range[] = []
   const lines = editor.document.getText().split(/\r?\n/)
   for (let i = 0; i < lines.length; i++) {

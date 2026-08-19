@@ -6,6 +6,7 @@ import {
   type ExtensionContext,
   type SourceControl,
   type SourceControlResourceGroup,
+  type SourceControlResourceState,
 } from '@universe-editor/extension-api'
 import { basename, join } from 'node:path'
 
@@ -17,9 +18,8 @@ let sourceControl: SourceControl | undefined
 let stagedGroup: SourceControlResourceGroup | undefined
 let changesGroup: SourceControlResourceGroup | undefined
 
-function seedResources(root: string): void {
-  if (!sourceControl || !stagedGroup || !changesGroup) return
-  stagedGroup.resourceStates = [
+export function stagedResourceStates(root: string): SourceControlResourceState[] {
+  return [
     {
       resourceUri: join(root, 'sample-staged.txt'),
       contextValue: 'staged',
@@ -31,7 +31,10 @@ function seedResources(root: string): void {
       decorations: { iconPath: 'diff-added', color: '#73c991', tooltip: 'Added' },
     },
   ]
-  changesGroup.resourceStates = [
+}
+
+export function changesResourceStates(root: string): SourceControlResourceState[] {
+  return [
     {
       resourceUri: join(root, 'sample-changed.txt'),
       contextValue: 'changed',
@@ -59,6 +62,12 @@ function seedResources(root: string): void {
       },
     },
   ]
+}
+
+function seedResources(root: string): void {
+  if (!sourceControl || !stagedGroup || !changesGroup) return
+  stagedGroup.resourceStates = stagedResourceStates(root)
+  changesGroup.resourceStates = changesResourceStates(root)
   sourceControl.count = 3
 }
 

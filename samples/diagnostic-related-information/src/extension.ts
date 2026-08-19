@@ -11,7 +11,7 @@ import {
 
 const WORD = 'duplicate_id'
 
-function occurrenceRanges(document: TextDocument): Range[] {
+export function occurrenceRanges(document: Pick<TextDocument, 'getText'>): Range[] {
   const ranges: Range[] = []
   const lines = document.getText().split(/\r\n|\r|\n/)
   for (let i = 0; i < lines.length; i++) {
@@ -30,7 +30,10 @@ function occurrenceRanges(document: TextDocument): Range[] {
   return ranges
 }
 
-function refreshDiagnostics(document: TextDocument, collection: DiagnosticCollection): void {
+export function refreshDiagnostics(
+  document: Pick<TextDocument, 'uri' | 'getText'>,
+  collection: Pick<DiagnosticCollection, 'set'>,
+): void {
   const ranges = occurrenceRanges(document)
   const diagnostics: Diagnostic[] =
     ranges.length >= 2

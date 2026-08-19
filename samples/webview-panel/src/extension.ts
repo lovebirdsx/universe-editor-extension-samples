@@ -12,12 +12,15 @@ const VIEW_TYPE = 'webview-panel.counter'
 let panel: WebviewPanel | undefined
 let count = 0
 
-function fileUri(fsPath: string): UriComponents {
+export function fileUri(fsPath: string): UriComponents {
   const forward = fsPath.replace(/\\/g, '/')
   return { scheme: 'file', path: forward.startsWith('/') ? forward : `/${forward}` }
 }
 
-function getWebviewContent(webview: Webview, extensionRoot: string): string {
+export function getWebviewContent(
+  webview: Pick<Webview, 'asWebviewUri' | 'cspSource'>,
+  extensionRoot: string,
+): string {
   const scriptUri = webview.asWebviewUri(fileUri(`${extensionRoot}/media/main.js`))
   const styleUri = webview.asWebviewUri(fileUri(`${extensionRoot}/media/main.css`))
   const codiconUri = webview.asWebviewUri(fileUri(`${extensionRoot}/media/codicon.css`))

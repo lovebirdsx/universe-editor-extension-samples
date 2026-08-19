@@ -47,6 +47,7 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "package": "uex package",
+    "e2e": "node ../../scripts/e2e/run.mjs declarative-features",
     "universe:prepublish": "npm run build"
   },
   "devDependencies": {
